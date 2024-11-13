@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# Function to set up web interface on specified port
+setup_web_interface() {
+    local default_interface=$1  # Interface to be set on port 80 ("mainsail" or "fluidd")
+    local alternate_interface   # The alternate interface that will be set to port 81
+
+    # Determine the alternate interface
+    if [[ $default_interface == "mainsail" ]]; then
+        alternate_interface="fluidd"
+    else
+        alternate_interface="mainsail"
+    fi
+
+    echo "###### Setting up $default_interface on port 80 and $alternate_interface on port 81..."
+
+    # Paths to the NGINX configurations
+    local default_config="/etc/nginx/sites-available/$default_interface"
+    local alternate_config="/etc/nginx/sites-available/$alternate_interface"
+
+    # Update NGINX configuration for the default interface (port 80)
+    if [[ -f "$default_config" ]]; then
+        sudo sed -i "s/listen [0-9]*;/listen 80;/" "$default_config"
+        sudo ln -sf "$default_config" /etc/nginx/sites-enabled/
+    else
+        echo "Error: NGINX configuration for $default_interface not found at $default_config"
+        return 1
+    fi
+
+    # Update NGINX configuration for the alternate interface (port 81)
+    if [[ -f "$alternate_config" ]]; then
+        sudo sed -i "s/listen [0-9]*;/listen 81;/" "$alternate_config"
+        sudo ln -sf "$alternate_config" /etc/nginx/sites-enabled/
+    else
+        echo "Error: NGINX configuration for $alternate_interface not found at $alternate_config"
+        return 1
+    fi
+
+    # Reload NGINX to apply changes
+    if command -v systemctl &> /dev/null; then
+        sudo systemctl reload nginx || echo "Warning: Could not reload NGINX. Check service status."
+    fi
+
+    echo "$default_interface is now set as the default on port 80, and $alternate_interface is set on port 81."
+}
+
+# Function to display menu if no arguments are given
+display_menu() {
+    echo "Select the web interface to set as default on port 80:"
+    select choice in "Mainsail" "Fluidd"; do
+        case $choice in
+            "Mainsail")
+                setup_web_interface "mainsail"
+                break
+                ;;
+            "Fluidd")
+                setup_web_interface "fluidd"
+                break
+                ;;
+            *)
+                echo "Invalid choice. Please select 1 or 2."
+                ;;
+        esac
+    done
+}
+
+# Main script logic
+if [[ -n $1 ]]; then
+    case $1 in
+        mainsail)
+            setup_web_interface "mainsail"
+            ;;
+        fluidd)
+            setup_web_interface "fluidd"
+            ;;
+        *)
+            echo "Invalid argument. Use 'mainsail' or 'fluidd', or run without arguments to use the menu."
+            exit 1
+            ;;
+    esac
+else
+    # Display menu if no arguments provided
+    display_menu
+fi

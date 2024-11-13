@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Define the file to modify
+config_file="/home/sovol/printer_data/config/printer.cfg"
+
+# Get the list of current serial devices
+current_devices=$(ls /dev/serial/by-id)
+
+# Prepare the new section to insert
+header="# Detected serial devices:"
+output="$header\n"
+for device in $current_devices; do
+    output+="# $device\n"
+done
+
+# Check if the header is already present
+if grep -q "$header" "$config_file"; then
+    # Remove the old section starting with the header
+    sed -i "/$header/,/^$/d" "$config_file"
+fi
+
+# Insert the updated list at the top of the config file
+sed -i "1i$output" "$config_file"
+
+echo "Serial devices updated in $config_file"

@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Define file paths
+UDEV_RULES="/etc/udev/rules.d/99-touchscreen-rotate.rules"
+X11_CONF="/etc/X11/xorg.conf.d/10-monitor.conf"
+
+# Define content for each file
+UDEV_CONTENT='ENV{ID_INPUT_TOUCHSCREEN}=="1", ENV{LIBINPUT_CALIBRATION_MATRIX}="-1 0 1 0 -1 1 0 0 1"'
+X11_CONTENT=$(cat <<EOF
+Section "Monitor"
+    Identifier "HDMI-1"
+    Option "Rotate" "inverted"
+EndSection
+EOF
+)
+
+# Toggle function to create or delete a file
+toggle_file() {
+    local filepath="$1"
+    local content="$2"
+
+    if [ -f "$filepath" ]; then
+        echo "Removing $filepath"
+        sudo rm "$filepath"
+    else
+        echo "Creating $filepath"
+        echo "$content" | sudo tee "$filepath" > /dev/null
+    fi
+}
+
+# Apply toggle to both files
+toggle_file "$UDEV_RULES" "$UDEV_CONTENT"
+toggle_file "$X11_CONF" "$X11_CONTENT"
+
+# Stop KlipperScreen
+echo "Stopping KlipperScreen..."
+sudo systemctl stop KlipperScreen.service
+
+# Kill Xorg
+echo "Killing Xorg..."
+sudo killall Xorg
+
+# Reload udev rules
+echo "Reloading udev rules..."
+sudo udevadm control --reload-rules && sudo udevadm trigger
+
+# Restart KlipperScreen
+echo "Starting KlipperScreen..."
+sudo systemctl start KlipperScreen.service
+
+echo "Done!"
