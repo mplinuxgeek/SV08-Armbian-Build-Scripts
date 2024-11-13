@@ -14,7 +14,7 @@ The primary goal of this project is to create an updated, optimized Armbian imag
 ## Getting Started
 
 ### Prerequisites
-- Linux environment (Debian-based recommended for compatibility)
+- Linux environment (Tested under Ubuntu 24.04, 24.10 is not supported by the Armbian build scripts)
 
 ### Cloning the Repository
 Clone the repository to your local machine:
