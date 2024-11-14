@@ -67,7 +67,7 @@ EOF
 
 # Install Fluidd on port 80 and Mainsail on port 81
 setup_web_interface "mainsail" "install_mainsail" 81
-setup_web_interface "fluidd" "install_fluidd" 82
+setup_web_interface "fluidd" "install_fluidd" 80
 
 # Install Crowsnest Webcam Service
 echo "###### Installing Crowsnest..."
