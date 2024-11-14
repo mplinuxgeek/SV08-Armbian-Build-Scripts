@@ -19,7 +19,11 @@ sudo apt-get update
 sudo apt-get install -y git curl build-essential qemu-user-static
 
 # Clone the Armbian build repository
-git clone --depth 1 "$REPO_URL"
+if [ -d "$(basename "$REPO_URL" .git)" ]; then
+    cd "$(basename "$REPO_URL" .git)" && git pull
+else
+    git clone --depth 1 "$REPO_URL"
+fi
 
 # Copy the entire userpatches directory into the build directory
 cp -rfv userpatches/ "build/"

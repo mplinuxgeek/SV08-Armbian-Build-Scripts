@@ -22,6 +22,7 @@ echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/010_$USERNAME
 
 # Update and install necessary packages
 apt-get update
+apt-get upgrade -y
 apt-get install -y git
 
 # Ensure the installer script is executable, then run it as the sovol user
@@ -55,3 +56,5 @@ chown -Rv "$USERNAME":"$USERNAME" /home/"$USERNAME"/ | grep -v retained
 
 # Run the systemd setup script explicitly with bash
 bash /tmp/overlay/setup_systemd_scripts.sh
+
+sed -i '/^disp_mode=/s/^/#/' /boot/armbianEnv.txt
