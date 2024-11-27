@@ -51,6 +51,10 @@ if [[ -d "/tmp/overlay/home" ]]; then
     done
 fi
 
+if compgen -G "/tmp/overlay/custom_config/*" > /dev/null; then
+    cp -rfv /tmp/overlay/custom_config/* /home/"$USERNAME"/printer_data/config/
+fi
+
 # Adjust ownership of the copied files to the sovol user
 chown -Rv "$USERNAME":"$USERNAME" /home/"$USERNAME"/ | grep -v retained
 

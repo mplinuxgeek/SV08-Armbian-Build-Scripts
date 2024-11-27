@@ -21,13 +21,14 @@ sudo apt-get install -y git curl build-essential qemu-user-static
 # Clone the Armbian build repository
 if [ -d "$(basename "$REPO_URL" .git)" ]; then
     cd "$(basename "$REPO_URL" .git)" && git pull
+    cd ..
 else
     git clone --depth 1 "$REPO_URL"
 fi
 
 # Copy the entire userpatches directory into the build directory
 cp -rfv userpatches/ "build/"
-chmod -R +x "build/userpatches/*.sh"
+chmod -R +x "build/userpatches/overlay/*.sh"
 
 # Run the compile script
 cd build

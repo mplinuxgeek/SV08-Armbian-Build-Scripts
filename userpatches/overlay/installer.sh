@@ -95,4 +95,6 @@ echo "###### Installing additional packages for numpy and matplotlib..."
 sudo apt-get update && sudo apt-get install -y python3-numpy python3-matplotlib libatlas-base-dev libopenblas-dev
 "$HOME/klippy-env/bin/pip" install -v numpy
 
+printf "yes\nhttps://app.obico.io\n\n" | moonraker_obico_setup_dialog || true
+
 echo "Installation completed successfully."
