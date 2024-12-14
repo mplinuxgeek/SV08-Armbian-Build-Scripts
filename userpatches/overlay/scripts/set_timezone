@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Path to the file containing the timezone
+TIMEZONE_FILE="/home/sovol/printer_data/time_zone.txt"
+
+# Read the timezone from the file
+if [ -f "$TIMEZONE_FILE" ]; then
+    TIMEZONE=$(cat "$TIMEZONE_FILE")
+else
+    echo "Timezone file not found at $TIMEZONE_FILE"
+    exit 1
+fi
+
+# Set the timezone using timedatectl
+sudo timedatectl set-timezone "$TIMEZONE"
+
+echo "Timezone set to $TIMEZONE"

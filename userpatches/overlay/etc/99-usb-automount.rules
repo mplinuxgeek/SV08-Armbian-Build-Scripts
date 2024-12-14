@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="block", KERNEL=="sd[a-z][0-9]", ENV{DEVTYPE}=="partition", RUN{program}+="/usr/bin/systemd-mount --no-block --collect $devnode /home/sovol/printer_data/gcodes/USB_%k"
+ACTION=="remove", SUBSYSTEM=="block", KERNEL=="sd[a-z][0-9]", ENV{DEVTYPE}=="partition", RUN{program}+="/usr/bin/systemd-umount /home/sovol/printer_data/gcodes/USB_%k", RUN+="/usr/bin/rmdir /home/sovol/printer_data/gcodes/USB_%k"
