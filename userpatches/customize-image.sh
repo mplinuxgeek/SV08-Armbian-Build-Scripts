@@ -60,5 +60,6 @@ chown -Rv "$USERNAME":"$USERNAME" /home/"$USERNAME"/ | grep -v retained
 
 # Run the systemd setup script explicitly with bash
 bash /tmp/overlay/setup_systemd_scripts.sh
+bash /tmp/overlay/setup_etc.sh
 
 sed -i '/^disp_mode=/s/^/#/' /boot/armbianEnv.txt
